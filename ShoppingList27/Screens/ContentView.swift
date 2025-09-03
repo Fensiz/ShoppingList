@@ -13,9 +13,25 @@ struct ContentView: View {
             Image(systemName: "apple.logo")
                 .imageScale(.large)
                 .foregroundStyle(.tint)
-            Text("Hello, Factory!")
+            VStack {
+                Text("Абвгде")
+                    .font(.custom("Rubik-Medium", size: 60))
+                Text("Абвгде")
+                    .font(.custom("Rubik-Regular", size: 60))
+                Text("Абвгде")
+                    .font(.system(size: 60, weight: .medium))
+            }
+
         }
         .padding()
+        .onAppear {
+            for family in UIFont.familyNames {
+                print(family)
+                for name in UIFont.fontNames(forFamilyName: family) {
+                    print("  \(name)")
+                }
+            }
+        }
     }
 }
 

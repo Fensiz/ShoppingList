@@ -7,10 +7,6 @@
 
 import SwiftUI
 
-extension Font {
-	static let title3Semibold: Font = .system(size: 20, weight: .medium)
-}
-
 struct ListCellView: View {
 	let item: ListItem
 
@@ -26,7 +22,6 @@ struct ListCellView: View {
 
 			HStack(spacing: 0) {
 				Text(item.name)
-					.font(.system(.title3, weight: .semibold))
 					.font(.title3Semibold)
 					.lineLimit(1)
 
