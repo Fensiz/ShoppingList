@@ -24,20 +24,13 @@ struct ListCellView: View {
 				Text(item.name)
 					.font(.title3Semibold)
 					.lineLimit(1)
-
-				let text: AttributedString = {
-					var title = AttributedString("\(item.count)/")
-					title.font = .title3Semibold
-					title.foregroundColor = .gray // заменить на цвет из asset
-
-					var subtitle = AttributedString("\(item.total)")
-					subtitle.font = .system(size: 20)
-					subtitle.foregroundColor = .gray // заменить на цвет из asset
-
-					return title + subtitle
-				}()
 				Spacer(minLength: Constants.padding / 2)
-				Text(text)
+				HStack(spacing: 0) {
+					Text("\(item.count)/")
+						.font(Font.appBody)
+					Text("\(item.total)")
+						.font(Font.appHeadline)
+				}
 			}
 		}
 		.padding(Constants.padding)
