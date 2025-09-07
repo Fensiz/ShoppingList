@@ -7,11 +7,62 @@
 
 import SwiftUI
 
+enum AppTheme: String, CaseIterable {
+	case light, dark, system
+}
+
 @main
 struct ShoppingList27App: App {
+	@State private var coordinator = AppCoordinator()
+	@AppStorage("appTheme") private var appTheme: AppTheme = AppTheme.system
+
+	init() {
+
+		let appearance = UINavigationBarAppearance()
+		appearance.configureWithOpaqueBackground()
+		appearance.shadowColor = .clear
+		appearance.backgroundColor = .screenBackground
+		appearance.largeTitleTextAttributes = [
+			.font: UIFont(name: "Rubik-SemiBold", size: 32)!,
+			.foregroundColor: UIColor.appText
+		]
+		UINavigationBar.appearance().standardAppearance = appearance
+		UINavigationBar.appearance().scrollEdgeAppearance = appearance
+		UINavigationBar.appearance().compactAppearance = appearance
+	}
+
 	var body: some Scene {
 		WindowGroup {
-			ContentView()
+			NavigationStack(path: $coordinator.navigationPath) {
+				ShoppingListsView(appTheme: $appTheme)
+					.navigationDestination(for: AppCoordinator.Screen.self) { screen in
+						switch screen {
+						case .shoppingList(let item):
+							EmptyView()
+						case .shoppingListEdit(let item, let action, let checkExistance):
+							let viewModel = ListItemModificationViewModel(listItem: item, mode: .edit, onSave: action, checkExistance: checkExistance)
+							ListItemModificationView(viewModel: viewModel)
+						case let .shoppingListCopy(item, action, checkExistance):
+							let viewModel = ListItemModificationViewModel(listItem: item, onSave: action, checkExistance: checkExistance)
+							ListItemModificationView(viewModel: viewModel)
+						case .shoppingListCreation(let action, let checkExistance):
+							let viewModel = ListItemModificationViewModel(onSave: action, checkExistance: checkExistance)
+							ListItemModificationView(viewModel: viewModel)
+						}
+					}
+			}
+			.environment(coordinator)
+			.fullScreenCover(
+				isPresented: $coordinator.isOnboardingShowing
+			) {
+				OnboardingView {
+					coordinator.finishOnboarding()
+				}
+			}
+			.preferredColorScheme(
+				appTheme == .system ? nil :
+				appTheme == .light ? .light : .dark
+			)
 		}
 	}
 }
