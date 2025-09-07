@@ -43,7 +43,7 @@ struct ListsCellView: View {
 				}
 			}
 			.swipeActions(edge: .trailing, allowsFullSwipe: false) {
-				Button(role: .destructive) {
+				Button {
 					deleteAction()
 				} label: {
 					Image("trash")

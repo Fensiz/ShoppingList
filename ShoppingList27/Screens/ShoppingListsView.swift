@@ -13,10 +13,33 @@ import SwiftUI
 		.mock2,
 		.mock3
 	]
+	private var itemForDeletion: ListItem?
 
-	func removeItem(_ item: ListItem) {
-		guard let removable = list.firstIndex(of: item) else { return }
+	var isAlertPresented: Bool = false
+
+	private func removeItem(_ item: ListItem?) {
+		guard
+			let item,
+			let removable = list.firstIndex(of: item)
+		else { return }
 		list.remove(at: removable)
+		print(list.count)
+	}
+
+	func confirmDeletion() {
+		guard let itemForDeletion else { return }
+		withAnimation {
+			removeItem(itemForDeletion)
+		}
+		self.itemForDeletion = nil
+	}
+	func cancelDeletion() {
+		self.itemForDeletion = nil
+	}
+
+	func showDeletionAlert(for item: ListItem) {
+		itemForDeletion = item
+		isAlertPresented = true
 	}
 	func removeItem(at index: Int) {
 		list.remove(at: index)
@@ -40,8 +63,7 @@ struct ShoppingListsView: View {
 			if viewModel.list.isEmpty {
 				emptyListStub
 			} else {
-				List(viewModel.list.indices, id: \.self) { index in
-					let item = viewModel.list[index]
+				List(viewModel.list) { item in
 					ListsCellView(item: item) {
 						coordinator.openShoppingListScreen(with: item)
 					} editAction: {
@@ -57,9 +79,7 @@ struct ShoppingListsView: View {
 							checkExistance: viewModel.isItemExist
 						)
 					} deleteAction: {
-						withAnimation {
-							viewModel.removeItem(at: index)
-						}
+						viewModel.showDeletionAlert(for: item)
 					}
 				}
 				.padding(.top, -20)
@@ -67,12 +87,10 @@ struct ShoppingListsView: View {
 				.scrollContentBackground(.hidden)
 				.safeAreaInset(edge: .bottom) {
 					AppButton(title: "Создать список") {
-						coordinator.openShoppingListCreationScreen { newItem in
-							viewModel.list.append(newItem)
-						} checkExistance: { name in
-							viewModel.list.contains(where: { $0.name == name })
-						}
-
+						coordinator.openShoppingListCreationScreen(
+							action: viewModel.addItem,
+							checkExistance: viewModel.isItemExist
+						)
 					}
 					.padding(.bottom, 20)
 					.padding(.horizontal, 16)
@@ -106,6 +124,16 @@ struct ShoppingListsView: View {
 						.padding(10)
 				}
 			}
+		}
+		.alert("Удаление списка", isPresented: $viewModel.isAlertPresented) {
+			Button("Удалить", role: .destructive) {
+				viewModel.confirmDeletion()
+			}
+			Button("Отмена", role: .cancel) {
+				viewModel.cancelDeletion()
+			}
+		} message: {
+			Text("Вы действительно хотите удалить список?")
 		}
 	}
 

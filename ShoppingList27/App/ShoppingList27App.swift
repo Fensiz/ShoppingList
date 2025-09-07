@@ -29,6 +29,10 @@ struct ShoppingList27App: App {
 		UINavigationBar.appearance().standardAppearance = appearance
 		UINavigationBar.appearance().scrollEdgeAppearance = appearance
 		UINavigationBar.appearance().compactAppearance = appearance
+
+		UIView.appearance(
+			whenContainedInInstancesOf: [UIAlertController.self]
+		).tintColor = .turtoise
 	}
 
 	var body: some Scene {
