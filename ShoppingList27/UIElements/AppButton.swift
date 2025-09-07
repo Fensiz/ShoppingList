@@ -22,21 +22,27 @@ struct AppButton: View {
 }
 
 #Preview {
-	AppButton(title: "Сохранить") {
-
-	}
+	AppButton(title: "Сохранить") {}
+	AppButton(title: "Сохранить") {}.disabled(true)
 }
 
 struct AppButtonStyle: ButtonStyle {
 	var normalColor: Color
 	var pressedColor: Color
+	var disabledColor: Color = .greyButton
+
+	@Environment(\.isEnabled) private var isEnabled
 
 	func makeBody(configuration: Configuration) -> some View {
 		configuration.label
 			.font(.appHeadline)
 			.frame(height: 44)
 			.frame(maxWidth: .infinity)
-			.background(configuration.isPressed ? pressedColor : normalColor)
+			.background(
+				isEnabled
+				? (configuration.isPressed ? pressedColor : normalColor)
+				: disabledColor
+			)
 			.foregroundColor(.white)
 			.cornerRadius(22)
 	}
