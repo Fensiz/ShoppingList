@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ListItem: Identifiable {
+struct ListItem: Identifiable, Hashable {
 	let logo: ItemLogo
 	let name: String
 	let count: Int
@@ -15,14 +15,22 @@ struct ListItem: Identifiable {
 	let id: UUID = .init()
 
 	static let mock: ListItem = .init(
-		logo: .init(imageName: "mock_paw", color: .blue),
+		logo: .init(imageName: "paw", color: .blue),
 		name: "Новый год",
 		count: 10,
 		total: 20
 	)
 	static let mock2: ListItem = .init(
-		logo: .init(imageName: "mock_paw", color: .indigo),
+		logo: .init(imageName: "paw", color: .indigo),
 		name: "Новый гоqwdpiojqwdoiwj[qoipjoqwijdpoqwidopijqwpoidjqwpoijqwoas" +
+		"pijqpwoijfopqiwjfopiqwfpoiqjopfijqpoifjqwopifqwopijqwpoijqwopijqwopi" +
+		"jfqwopijfqwpoijfoqpiwд",
+		count: 10,
+		total: 20
+	)
+	static let mock3: ListItem = .init(
+		logo: .init(imageName: "paw", color: .indigo),
+		name: "Нqwdqwовqwdqwый гоqwdpiojqwdoiwj[qoipjoqwijdpoqwidopijqwpoidjqwpoijqwoas" +
 		"pijqpwoijfopqiwjfopiqwfpoiqjopfijqpoifjqwopifqwopijqwpoijqwopijqwopi" +
 		"jfqwopijfqwpoijfoqpiwд",
 		count: 10,

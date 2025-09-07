@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ItemLogo {
+struct ItemLogo: Hashable {
 	let imageName: String
 	let color: Color
 }
