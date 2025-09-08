@@ -99,30 +99,10 @@ struct ShoppingListsView: View {
 		}
 		.navigationBarTitleDisplayMode(.inline)
 		.toolbar {
-			ToolbarItem(placement: .navigationBarLeading) {
-				Text("Мои списки")
-					.font(.title1SemiBold)
-			}
-			ToolbarItem(placement: .navigationBarTrailing) {
-				Menu {
-					Picker(selection: $appTheme) {
-						Text("Светлая").tag(AppTheme.light)
-						Text("Темная").tag(AppTheme.dark)
-						Text("Системная").tag(AppTheme.system)
-					} label: {
-						Label("Установить тему", image: .contrast)
-					}
-					.pickerStyle(.menu)
-					Button {
-						
-					} label: {
-						Label("Сортировать\nпо Алфавиту", systemImage: "arrow.up.arrow.down")
-					}
-				} label: {
-					Image(.ellipsisDots)
-						.foregroundColor(.appSystemIcon)
-						.padding(10)
-				}
+			LargeTitleToolbar(title: "Мои списки")
+			MenuToolbar {
+				MenuElement.themeSelector($appTheme)
+				MenuElement.sortByName({})
 			}
 		}
 		.alert("Удаление списка", isPresented: $viewModel.isAlertPresented) {

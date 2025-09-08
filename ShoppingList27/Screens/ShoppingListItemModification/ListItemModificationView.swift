@@ -21,13 +21,11 @@ struct ListItemModificationView: View {
 			Color.screenBackground.ignoresSafeArea()
 			VStack(spacing: 24) {
 				VStack(spacing: 4) {
-					AppTextField(text: $viewModel.listName)
-					if !viewModel.isItemNameUnique {
-						Text("Это название уже используется, пожалуйста, измените его.")
-							.foregroundStyle(.appSystemRed)
-							.frame(maxWidth: .infinity, alignment: .leading)
-							.padding(.horizontal, 8)
-					}
+					AppTextField(
+						text: $viewModel.listName,
+						state: viewModel.isItemNameUnique ? .normal
+						: .error("Это название уже используется, пожалуйста, измените его.")
+					)
 				}
 				AppColorPicker(
 					selectedColor: $viewModel.selectedColor,
@@ -44,27 +42,13 @@ struct ListItemModificationView: View {
 				}
 				.disabled(viewModel.isSaveDisabled)
 			}
-			.padding(16)
+			.padding(Constants.padding)
 		}
 		.navigationBarTitleDisplayMode(.inline)
 		.navigationBarBackButtonHidden(true)
 		.toolbar {
-			ToolbarItem(placement: .navigationBarLeading) {
-				Button {
-					presentationMode.wrappedValue.dismiss()
-				} label: {
-					Image("chevron.left")
-						.foregroundColor(.appSystemIcon)
-				}
-			}
-
-			ToolbarItem(placement: .principal) {
-				HStack {
-					Text("\(viewModel.isNewItem ? "Создать" : "Редактировать") список")
-						.font(.appHeadline)
-					Spacer()
-				}
-			}
+			BackButtonToolbar()
+			TitleToolbar(title: "\(viewModel.isNewItem ? "Создать" : "Редактировать") список")
 		}
 	}
 }
