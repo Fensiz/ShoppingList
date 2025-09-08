@@ -46,21 +46,21 @@ struct ListsCellView: View {
 				Button {
 					deleteAction()
 				} label: {
-					Image("trash")
+					Image(.trash)
 				}
 				.tint(.appSystemRed)
 
 				Button {
 					copyAction()
 				} label: {
-					Image("duplicate")
+					Image(.duplicate)
 				}
 				.tint(.appSystemOrange)
 
 				Button {
 					editAction()
 				} label: {
-					Image("modify")
+					Image(.modify)
 				}
 				.tint(.appSystemGrey)
 			}
