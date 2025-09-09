@@ -64,23 +64,29 @@ struct ShoppingListsView: View {
 				emptyListStub
 			} else {
 				List(viewModel.list) { item in
-					ListsCellView(item: item) {
-						coordinator.openShoppingListScreen(with: item)
-					} editAction: {
-						coordinator.openShoppingListEditScreen(
-							with: item,
-							action: viewModel.addItem,
-							checkExistance: viewModel.isItemExist
-						)
-					} copyAction: {
-						coordinator.openShoppingListCopyScreen(
-							with: item,
-							action: viewModel.addItem,
-							checkExistance: viewModel.isItemExist
-						)
-					} deleteAction: {
-						viewModel.showDeletionAlert(for: item)
-					}
+					ListsCellView(item: item)
+						.swipeActions {
+							AppSwipeAction.delete {
+								viewModel.showDeletionAlert(for: item)
+							}
+							AppSwipeAction.copy {
+								coordinator.openShoppingListCopyScreen(
+									with: item,
+									action: viewModel.addItem,
+									checkExistance: viewModel.isItemExist
+								)
+							}
+							AppSwipeAction.edit {
+								coordinator.openShoppingListEditScreen(
+									with: item,
+									action: viewModel.addItem,
+									checkExistance: viewModel.isItemExist
+								)
+							}
+						}
+						.onTapGesture {
+							coordinator.openShoppingListScreen(with: item)
+						}
 				}
 				.padding(.top, -20)
 				.listStyle(.insetGrouped)

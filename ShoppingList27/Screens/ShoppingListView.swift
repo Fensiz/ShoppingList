@@ -106,12 +106,16 @@ struct ShoppingListView: View {
 			} else {
 				List(viewModel.filteredProducts) { item in
 					if let index = viewModel.products.firstIndex(of: item) {
-						ProductRow(item: $viewModel.products[index]) { item in
-							_ = item
-						} deleteAction: { item in
-							viewModel.showDeletionAlert(for: item)
-						}
-						.listSectionSeparator(.hidden, edges: .top)
+						ProductRow(item: $viewModel.products[index])
+							.swipeActions {
+								AppSwipeAction.delete {
+									viewModel.showDeletionAlert(for: item)
+								}
+								AppSwipeAction.edit {
+
+								}
+							}
+							.listSectionSeparator(.hidden, edges: .top)
 					}
 				}
 				.listStyle(.plain)
@@ -188,8 +192,6 @@ private struct PreviewWrapper: View {
 
 struct ProductRow: View {
 	@Binding var item: Product
-	let editAction: (Product) -> Void
-	let deleteAction: (Product) -> Void
 
 	var body: some View {
 		HStack(spacing: 8) {
@@ -211,64 +213,24 @@ struct ProductRow: View {
 		.frame(height: 52)
 		.listRowInsets(.init())
 		.background(.screenBackground)
-		.swipeActions(edge: .trailing, allowsFullSwipe: false) {
-			Button {
-				deleteAction(item)
-			} label: {
-				Image(.trash)
-			}
-			.tint(.appSystemRed)
-			Button {
-				editAction(item)
-			} label: {
-				Image(.modify)
-			}
-			.tint(.appSystemGrey)
-		}
 	}
 }
 
-struct ProductItemModificationView: View {
-	@State var name: String = ""
-	@State var unit: Unit = .piece
-
-	var body: some View {
-		VStack {
-			AppTextField(text: $name)
-			HStack {
-				AppTextField(text: .constant("1"), state: .normal)
-				AppUnitPicker(selectedUnit: $unit)
-			}
-		}
-	}
-}
-
-#Preview {
-	ProductItemModificationView()
-}
-
-
-// MARK: - Кастомная кнопка для возврата
-struct BackButton: View {
-	@Environment(\.presentationMode) private var presentationMode
-	var imageName: String = "chevron.left"
-	var color: Color = .appSystemIcon
-
-	var body: some View {
-		Button {
-			presentationMode.wrappedValue.dismiss()
-		} label: {
-			Image(imageName)
-				.foregroundColor(color)
-		}
-	}
-}
-
-// MARK: - Тулбар с кнопкой назад
-struct BackButtonToolbar: ToolbarContent {
-	var body: some ToolbarContent {
-		ToolbarItem(placement: .navigationBarLeading) {
-			BackButton()
-		}
-	}
-}
+//struct ProductItemModificationView: View {
+//	@State var name: String = ""
+//	@State var unit: Unit = .piece
+//
+//	var body: some View {
+//		VStack {
+//			AppTextField(text: $name)
+//			HStack {
+//				AppTextField(text: .constant("1"), state: .normal)
+//				AppUnitPicker(selectedUnit: $unit)
+//			}
+//		}
+//	}
+//}
+//
+//#Preview {
+//	ProductItemModificationView()
+//}

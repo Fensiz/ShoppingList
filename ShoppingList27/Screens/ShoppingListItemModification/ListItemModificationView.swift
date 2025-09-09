@@ -24,7 +24,8 @@ struct ListItemModificationView: View {
 					AppTextField(
 						text: $viewModel.listName,
 						state: viewModel.isItemNameUnique ? .normal
-						: .error("Это название уже используется, пожалуйста, измените его.")
+						: .error("Это название уже используется, пожалуйста, измените его."),
+						placeholder: "Введите название списка"
 					)
 				}
 				AppColorPicker(
