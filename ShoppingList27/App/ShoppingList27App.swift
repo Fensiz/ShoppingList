@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 enum AppTheme: String, CaseIterable {
 	case light, dark, system
@@ -35,10 +36,25 @@ struct ShoppingList27App: App {
 		).tintColor = .turtoise
 	}
 
+	var sharedModelContainer: ModelContainer = {
+		let schema = Schema([
+			ListItemModel.self,
+			ProductListItemModel.self
+		])
+		let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+
+		do {
+			return try ModelContainer(for: schema, configurations: [modelConfiguration])
+		} catch {
+			fatalError("Could not create ModelContainer: \(error)")
+		}
+	}()
+
 	var body: some Scene {
 		WindowGroup {
 			NavigationStack(path: $coordinator.navigationPath) {
-				ShoppingListsView(appTheme: $appTheme)
+				let viewModel = ShoppingListsViewModel(context: sharedModelContainer.mainContext)
+				ShoppingListsView(viewModel: viewModel, appTheme: $appTheme)
 					.navigationDestination(for: AppCoordinator.Screen.self) { screen in
 						switch screen {
 						case .shoppingList(let item):
@@ -55,6 +71,7 @@ struct ShoppingList27App: App {
 						}
 					}
 			}
+			.modelContainer(sharedModelContainer)
 			.environment(coordinator)
 			.fullScreenCover(
 				isPresented: $coordinator.isOnboardingShowing

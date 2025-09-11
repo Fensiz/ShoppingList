@@ -54,16 +54,16 @@ struct ListItemModificationView: View {
 	}
 }
 
-#Preview {
-	NavigationStack {
-		let viewModel = ListItemModificationViewModel(
-			listItem: .mock,
-			onSave: {_ in},
-			checkExistance: {_ in false}
-		)
-		let coordinator = AppCoordinator()
-
-		ListItemModificationView(viewModel: viewModel)
-			.environment(coordinator)
-	}
-}
+//#Preview {
+//	NavigationStack {
+//		let viewModel = ListItemModificationViewModel(
+//			listItem: .mock,
+//			onSave: {_ in},
+//			checkExistance: {_ in false}
+//		)
+//		let coordinator = AppCoordinator()
+//
+//		ListItemModificationView(viewModel: viewModel)
+//			.environment(coordinator)
+//	}
+//}

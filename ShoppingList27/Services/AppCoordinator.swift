@@ -17,20 +17,20 @@ import Combine
 
 	enum Screen: Hashable {
 		case shoppingListCreation(
-			action: (ListItem) -> Void,
+			action: (ListItemModel) -> Void,
 			checkExistance: (String) -> Bool
 		)
 		case shoppingListEdit(
-			item: ListItem,
-			action: (ListItem) -> Void,
+			item: ListItemModel,
+			action: (ListItemModel) -> Void,
 			checkExistance: (String) -> Bool
 		)
 		case shoppingListCopy(
-			item: ListItem,
-			action: (ListItem) -> Void,
+			item: ListItemModel,
+			action: (ListItemModel) -> Void,
 			checkExistance: (String) -> Bool
 		)
-		case shoppingList(item: ListItem)
+		case shoppingList(item: ListItemModel)
 
 		static func ==(lhs: Screen, rhs: Screen) -> Bool {
 			switch (lhs, rhs) {
@@ -81,12 +81,12 @@ import Combine
 		navigationPath.removeAll()
 	}
 
-	func openShoppingListScreen(with item: ListItem) {
+	func openShoppingListScreen(with item: ListItemModel) {
 		navigationPath.append(.shoppingList(item: item))
 	}
 
 	func openShoppingListCreationScreen(
-		action: @escaping (ListItem) -> Void,
+		action: @escaping (ListItemModel) -> Void,
 		checkExistance: @escaping (String) -> Bool
 	) {
 		navigationPath.append(
@@ -98,8 +98,8 @@ import Combine
 	}
 
 	func openShoppingListEditScreen(
-		with item: ListItem,
-		action: @escaping (ListItem) -> Void,
+		with item: ListItemModel,
+		action: @escaping (ListItemModel) -> Void,
 		checkExistance: @escaping (String) -> Bool
 	) {
 		navigationPath.append(
@@ -112,8 +112,8 @@ import Combine
 	}
 
 	func openShoppingListCopyScreen(
-		with item: ListItem,
-		action: @escaping (ListItem) -> Void,
+		with item: ListItemModel,
+		action: @escaping (ListItemModel) -> Void,
 		checkExistance: @escaping (String) -> Bool
 	) {
 		navigationPath.append(

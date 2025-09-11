@@ -13,6 +13,7 @@ struct Product: Identifiable, Hashable {
 	var count: Int
 	var unit: Unit
 	var isBought: Bool
+//	@Transient
 	var id: String { name }
 
 	static func == (lhs: Product, rhs: Product) -> Bool {
@@ -20,36 +21,7 @@ struct Product: Identifiable, Hashable {
 	}
 }
 
-struct ListItem: Identifiable, Hashable {
-	let logo: ItemLogo
-	let name: String
-	let count: Int
-	let total: Int
-	let id: UUID = .init()
 
-	static let mock: ListItem = .init(
-		logo: .init(imageName: "paw", color: .blue),
-		name: "Новый год",
-		count: 10,
-		total: 20
-	)
-	static let mock2: ListItem = .init(
-		logo: .init(imageName: "paw", color: .indigo),
-		name: "Новый гоqwdpiojqwdoiwj[qoipjoqwijdpoqwidopijqwpoidjqwpoijqwoas" +
-		"pijqpwoijfopqiwjfopiqwfpoiqjopfijqpoifjqwopifqwopijqwpoijqwopijqwopi" +
-		"jfqwopijfqwpoijfoqpiwд",
-		count: 10,
-		total: 20
-	)
-	static let mock3: ListItem = .init(
-		logo: .init(imageName: "paw", color: .indigo),
-		name: "Нqwdqwовqwdqwый гоqwdpiojqwdoiwj[qoipjoqwijdpoqwidopijqwpoidjqwpoijqwoas" +
-		"pijqpwoijfopqiwjfopiqwfpoiqjopfijqpoifjqwopifqwopijqwpoijqwopijqwopi" +
-		"jfqwopijfqwpoijfoqpiwд",
-		count: 10,
-		total: 20
-	)
-}
 
 //@Model
 //final class ListItem2: Identifiable, Hashable {

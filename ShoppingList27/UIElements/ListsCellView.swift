@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ListsCellView: View {
-	let item: ListItem
+	let item: ListItemModel
 
 	var body: some View {
 		Section {
@@ -56,13 +56,13 @@ struct ListsCellView: View {
 	}
 }
 
-#Preview {
-	List {
-		ListsCellView(item: .mock2)
-		ListsCellView(item: .mock2)
-			.border(Color.red)
-	}
-	.listStyle(.insetGrouped)
-	.scrollContentBackground(.hidden)
-	.background(Color.screenBackground)
-}
+//#Preview {
+//	List {
+//		ListsCellView(item: .mock2)
+//		ListsCellView(item: .mock2)
+//			.border(Color.red)
+//	}
+//	.listStyle(.insetGrouped)
+//	.scrollContentBackground(.hidden)
+//	.background(Color.screenBackground)
+//}

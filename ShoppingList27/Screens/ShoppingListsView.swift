@@ -6,18 +6,127 @@
 //
 
 import SwiftUI
+import SwiftData
+
+@Model
+final class ListItemModel {
+	var logoImageName: String
+	var logoColorHex: String
+
+	@Attribute(.unique)
+	var name: String
+	@Relationship(deleteRule: .cascade)
+	var products: [ProductListItemModel]
+	@Transient
+	var count: Int { products.map(\.isBought).count }
+	@Transient
+	var total: Int { products.count }
+	@Transient
+	var logo: ItemLogo {
+		get {
+			ItemLogo(
+				imageName: logoImageName,
+				color: Color(hex: logoColorHex)
+			)
+		}
+		set {
+			logoImageName = newValue.imageName
+			logoColorHex = newValue.color.toHex()
+		}
+	}
+	
+	init(logo: ItemLogo, name: String, products: [ProductListItemModel]) {
+		logoImageName = logo.imageName
+		logoColorHex = logo.color.toHex()
+		self.name = name
+		self.products = products
+	}
+}
+
+@Model
+final class ProductListItemModel {
+	@Attribute(.unique)
+	var name: String
+	@Relationship(deleteRule: .nullify, inverse: \ListItemModel.products)
+	var list: ListItemModel
+	var isBought: Bool = false
+	var count: Int
+
+	var unitRaw: String
+	@Transient
+	var unit: Unit {
+		get { Unit(rawValue: unitRaw) ?? .piece }
+		set { unitRaw = newValue.rawValue }
+	}
+
+	init(name: String, list: ListItemModel, count: Int, unit: Unit) {
+		self.name = name
+		self.list = list
+		self.count = count
+		self.unitRaw = unit.rawValue
+	}
+}
+
+struct ListItem: Identifiable, Hashable {
+	let logo: ItemLogo
+	let name: String
+	let count: Int
+	let total: Int
+	var id: String { name }
+	init(logo: ItemLogo, name: String, count: Int, total: Int) {
+		self.logo = logo
+		self.name = name
+		self.count = count
+		self.total = total
+	}
+
+	static let mock: ListItem = .init(
+		logo: .init(imageName: "paw", color: .blue),
+		name: "Новый год",
+		count: 10,
+		total: 20
+	)
+	static let mock2: ListItem = .init(
+		logo: .init(imageName: "paw", color: .indigo),
+		name: "Новый гоqwdpiojqwdoiwj[qoipjoqwijdpoqwidopijqwpoidjqwpoijqwoas" +
+		"pijqpwoijfopqiwjfopiqwfpoiqjopfijqpoifjqwopifqwopijqwpoijqwopijqwopi" +
+		"jfqwopijfqwpoijfoqpiwд",
+		count: 10,
+		total: 20
+	)
+	static let mock3: ListItem = .init(
+		logo: .init(imageName: "paw", color: .indigo),
+		name: "Нqwdqwовqwdqwый гоqwdpiojqwdoiwj[qoipjoqwijdpoqwidopijqwpoidjqwpoijqwoas" +
+		"pijqpwoijfopqiwjfopiqwfpoiqjopfijqpoifjqwopifqwopijqwpoijqwopijqwopi" +
+		"jfqwopijfqwpoijfoqpiwд",
+		count: 10,
+		total: 20
+	)
+}
 
 @Observable final class ShoppingListsViewModel {
-	var list: [ListItem] = [
-		.mock,
-		.mock2,
-		.mock3
-	]
-	private var itemForDeletion: ListItem?
+	var list: [ListItemModel] = []
+	private var itemForDeletion: ListItemModel?
 
 	var isAlertPresented: Bool = false
 
-	private func removeItem(_ item: ListItem?) {
+	var context: ModelContext?
+
+	init(context: ModelContext? = nil) {
+		self.context = context
+		fetchListItems()
+	}
+
+	func fetchListItems() {
+		guard let context else { return }
+		do {
+			let descriptor = FetchDescriptor<ListItemModel>(sortBy: [SortDescriptor(\.name)])
+			list = try context.fetch(descriptor)
+		} catch {
+			print("Ошибка загрузки списков: \(error)")
+		}
+	}
+	private func removeItem(_ item: ListItemModel?) {
 		guard
 			let item,
 			let removable = list.firstIndex(of: item)
@@ -37,7 +146,7 @@ import SwiftUI
 		self.itemForDeletion = nil
 	}
 
-	func showDeletionAlert(for item: ListItem) {
+	func showDeletionAlert(for item: ListItemModel) {
 		itemForDeletion = item
 		isAlertPresented = true
 	}
@@ -47,14 +156,30 @@ import SwiftUI
 	func isItemExist(with name: String) -> Bool {
 		list.contains(where: { $0.name == name })
 	}
-	func addItem(_ item: ListItem) {
+	func addNewItem(_ item: ListItemModel) {
+		print(1)
+		guard let context else { return }
+		print(2)
+//		let model = ListItemModel(logo: item.logo, name: item.name, products: [])
+		print(3)
+		context.insert(item)
+		saveContext()
 		list.append(item)
+	}
+	private func saveContext() {
+		do {
+			try context?.save()
+			print("ok")
+		} catch {
+			print("⚠️ Ошибка сохранения: \(error)")
+		}
 	}
 }
 
 struct ShoppingListsView: View {
 	@Environment(AppCoordinator.self) var coordinator: AppCoordinator
-	@State var viewModel: ShoppingListsViewModel = .init()
+	@State var viewModel: ShoppingListsViewModel
+	@Environment(\.modelContext) private var context
 	@Binding var appTheme: AppTheme
 
 	var body: some View {
@@ -63,26 +188,26 @@ struct ShoppingListsView: View {
 			if viewModel.list.isEmpty {
 				emptyListStub
 			} else {
-				List(viewModel.list) { item in
+				List(viewModel.list, id: \.name) { item in
 					ListsCellView(item: item)
 						.swipeActions {
 							AppSwipeAction.delete {
 								viewModel.showDeletionAlert(for: item)
 							}
-							AppSwipeAction.copy {
-								coordinator.openShoppingListCopyScreen(
-									with: item,
-									action: viewModel.addItem,
-									checkExistance: viewModel.isItemExist
-								)
-							}
-							AppSwipeAction.edit {
-								coordinator.openShoppingListEditScreen(
-									with: item,
-									action: viewModel.addItem,
-									checkExistance: viewModel.isItemExist
-								)
-							}
+//							AppSwipeAction.copy {
+//								coordinator.openShoppingListCopyScreen(
+//									with: item,
+//									action: viewModel.addItem,
+//									checkExistance: viewModel.isItemExist
+//								)
+//							}
+//							AppSwipeAction.edit {
+//								coordinator.openShoppingListEditScreen(
+//									with: item,
+//									action: viewModel.addItem,
+//									checkExistance: viewModel.isItemExist
+//								)
+//							}
 						}
 						.onTapGesture {
 							coordinator.openShoppingListScreen(with: item)
@@ -92,16 +217,24 @@ struct ShoppingListsView: View {
 				.listStyle(.insetGrouped)
 				.scrollContentBackground(.hidden)
 				.safeAreaInset(edge: .bottom) {
-					AppButton(title: "Создать список") {
-						coordinator.openShoppingListCreationScreen(
-							action: viewModel.addItem,
-							checkExistance: viewModel.isItemExist
-						)
-					}
-					.padding(.bottom, 20)
-					.padding(.horizontal, 16)
+					Color.clear
+						.frame(height: 64)
 				}
 			}
+			VStack {
+				Spacer()
+				AppButton(title: "Создать список") {
+					coordinator.openShoppingListCreationScreen(
+						action: viewModel.addNewItem,
+						checkExistance: viewModel.isItemExist
+					)
+				}
+				.padding(.bottom, 20)
+				.padding(.horizontal, 16)
+			}
+		}
+		.onAppear {
+			viewModel.context = context
 		}
 		.navigationBarTitleDisplayMode(.inline)
 		.toolbar {
@@ -149,7 +282,7 @@ private struct PreviewWrapper: View {
 	
 	var body: some View {
 		NavigationStack {
-			ShoppingListsView(appTheme: .constant(.dark))
+			ShoppingListsView(viewModel: .init(), appTheme: .constant(.dark))
 				.environment(coordinator)
 		}
 	}
