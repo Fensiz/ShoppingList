@@ -17,20 +17,31 @@ import Combine
 
 	enum Screen: Hashable {
 		case shoppingListCreation(
-			action: (ListItem) -> Void,
+			action: (ListItemModel) -> Void,
 			checkExistance: (String) -> Bool
 		)
 		case shoppingListEdit(
-			item: ListItem,
-			action: (ListItem) -> Void,
+			item: ListItemModel,
+			action: (ListItemModel) -> Void,
 			checkExistance: (String) -> Bool
 		)
 		case shoppingListCopy(
-			item: ListItem,
-			action: (ListItem) -> Void,
+			item: ListItemModel,
+			action: (ListItemModel) -> Void,
 			checkExistance: (String) -> Bool
 		)
-		case shoppingList(item: ListItem)
+		case shoppingList(item: ListItemModel)
+
+		case productCreation(
+			list: ListItemModel,
+			action: (ProductItemModel) -> Void,
+			checkExistance: (String) -> Bool
+		)
+		case productEdit(
+			item: ProductItemModel,
+			action: (ProductItemModel) -> Void,
+			checkExistance: (String) -> Bool
+		)
 
 		static func ==(lhs: Screen, rhs: Screen) -> Bool {
 			switch (lhs, rhs) {
@@ -60,12 +71,22 @@ import Combine
 			case let .shoppingList(item):
 				hasher.combine(3)
 				hasher.combine(item)
+			case .productCreation:
+				hasher.combine(4)
+			case let .productEdit(item, _, _):
+				hasher.combine(5)
+				hasher.combine(item)
+
 			}
 		}
 	}
 
 	init() {
 		isOnboardingShowing = !UserDefaults.standard.bool(forKey: AppCoordinator.key)
+	}
+
+	func goBack() {
+		_ = navigationPath.popLast()
 	}
 
 	func start() {
@@ -81,12 +102,20 @@ import Combine
 		navigationPath.removeAll()
 	}
 
-	func openShoppingListScreen(with item: ListItem) {
+	func openProductCreationScreen(
+		list: ListItemModel,
+		action: @escaping (ProductItemModel) -> Void,
+		checkExistance: @escaping (String) -> Bool
+	) {
+		navigationPath.append(.productCreation(list: list, action: action, checkExistance: checkExistance))
+	}
+
+	func openShoppingListScreen(with item: ListItemModel) {
 		navigationPath.append(.shoppingList(item: item))
 	}
 
 	func openShoppingListCreationScreen(
-		action: @escaping (ListItem) -> Void,
+		action: @escaping (ListItemModel) -> Void,
 		checkExistance: @escaping (String) -> Bool
 	) {
 		navigationPath.append(
@@ -98,8 +127,8 @@ import Combine
 	}
 
 	func openShoppingListEditScreen(
-		with item: ListItem,
-		action: @escaping (ListItem) -> Void,
+		with item: ListItemModel,
+		action: @escaping (ListItemModel) -> Void,
 		checkExistance: @escaping (String) -> Bool
 	) {
 		navigationPath.append(
@@ -112,8 +141,8 @@ import Combine
 	}
 
 	func openShoppingListCopyScreen(
-		with item: ListItem,
-		action: @escaping (ListItem) -> Void,
+		with item: ListItemModel,
+		action: @escaping (ListItemModel) -> Void,
 		checkExistance: @escaping (String) -> Bool
 	) {
 		navigationPath.append(
@@ -125,18 +154,3 @@ import Combine
 		)
 	}
 }
-
-
-//@ObservationIgnored
-//var didFinishOnboarding: Bool {
-//	get {
-//		access(keyPath: \.didFinishOnboarding)
-//		return UserDefaults.standard.bool(forKey: AppCoordinator.key)
-//	}
-//	set {
-//		withMutation(keyPath: \.didFinishOnboarding) {
-//			UserDefaults.standard.setValue(newValue, forKey: AppCoordinator.key)
-//			print(newValue)
-//		}
-//	}
-//}

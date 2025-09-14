@@ -24,7 +24,8 @@ struct ListItemModificationView: View {
 					AppTextField(
 						text: $viewModel.listName,
 						state: viewModel.isItemNameUnique ? .normal
-						: .error("Это название уже используется, пожалуйста, измените его.")
+						: .error("Это название уже используется, пожалуйста, измените его."),
+						placeholder: "Введите название списка"
 					)
 				}
 				AppColorPicker(
@@ -53,16 +54,16 @@ struct ListItemModificationView: View {
 	}
 }
 
-#Preview {
-	NavigationStack {
-		let viewModel = ListItemModificationViewModel(
-			listItem: .mock,
-			onSave: {_ in},
-			checkExistance: {_ in false}
-		)
-		let coordinator = AppCoordinator()
-
-		ListItemModificationView(viewModel: viewModel)
-			.environment(coordinator)
-	}
-}
+//#Preview {
+//	NavigationStack {
+//		let viewModel = ListItemModificationViewModel(
+//			listItem: .mock,
+//			onSave: {_ in},
+//			checkExistance: {_ in false}
+//		)
+//		let coordinator = AppCoordinator()
+//
+//		ListItemModificationView(viewModel: viewModel)
+//			.environment(coordinator)
+//	}
+//}

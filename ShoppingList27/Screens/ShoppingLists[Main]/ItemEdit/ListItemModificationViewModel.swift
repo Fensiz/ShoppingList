@@ -12,11 +12,11 @@ import SwiftUI
 		case add
 		case edit
 	}
-	let originalItem: ListItem?
+	let originalItem: ListItemModel?
 	var listName: String = ""
 	var selectedColor: Color?
 	var selectedLogo: String?
-	let onSave: ((ListItem) -> Void)?
+	let onSave: ((ListItemModel) -> Void)?
 	let checkExistance: ((String) -> Bool)
 	let mode: Mode
 
@@ -40,9 +40,9 @@ import SwiftUI
 	}
 
 	init(
-		listItem: ListItem? = nil,
+		listItem: ListItemModel? = nil,
 		mode: Mode = .add,
-		onSave: ((ListItem) -> Void)? = nil,
+		onSave: ((ListItemModel) -> Void)? = nil,
 		checkExistance: @escaping ((String) -> Bool) = { _ in false }
 	) {
 		self.originalItem = listItem
@@ -58,12 +58,18 @@ import SwiftUI
 
 	func save() {
 		guard let selectedLogo, let selectedColor else { return }
-		let item = ListItem(
+		let item = ListItemModel(
 			logo: .init(imageName: selectedLogo, color: selectedColor),
 			name: listName,
-			count: 0,
-			total: 0
+			products: []
 		)
+
+//		(
+//			logo: .init(imageName: selectedLogo, color: selectedColor),
+//			name: listName,
+//			count: 0,
+//			total: 0
+//		)
 		onSave?(item)
 	}
 }
