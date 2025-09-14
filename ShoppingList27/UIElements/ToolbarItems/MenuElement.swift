@@ -8,7 +8,7 @@
 import SwiftUI
 
 enum MenuElement: Hashable {
-	case sortByName(() -> Void)
+	case sortByName(() -> Void, Bool)
 	case share(() -> Void)
 	case uncheckAll(() -> Void)
 	case deleteBought(() -> Void)
@@ -16,7 +16,9 @@ enum MenuElement: Hashable {
 
 	func hash(into hasher: inout Hasher) {
 		switch self {
-		case .sortByName: hasher.combine("sortByName")
+		case .sortByName(_, let isOn):
+			hasher.combine("sortByName")
+			hasher.combine(isOn)
 		case .share: hasher.combine("share")
 		case .uncheckAll: hasher.combine("uncheckAll")
 		case .deleteBought: hasher.combine("deleteBought")
@@ -26,8 +28,9 @@ enum MenuElement: Hashable {
 
 	static func == (lhs: MenuElement, rhs: MenuElement) -> Bool {
 		switch (lhs, rhs) {
-		case (.sortByName, .sortByName),
-			 (.share, .share),
+		case let (.sortByName(_, lState), .sortByName(_, rState)):
+			return lState == rState
+		case (.share, .share),
 			 (.uncheckAll, .uncheckAll),
 			 (.deleteBought, .deleteBought),
 			 (.themeSelector, .themeSelector):
@@ -40,9 +43,14 @@ enum MenuElement: Hashable {
 	@ViewBuilder
 	var button: some View {
 		switch self {
-		case .sortByName(let action):
+		case .sortByName(let action, let state):
 			Button(action: action) {
-				Label("Сортировать\nпо Алфавиту", systemImage: "arrow.up.arrow.down")
+				Label {
+					Text("Сортировать\nпо Алфавиту")
+				} icon: {
+					Image(systemName: "arrow.up.arrow.down")
+						.tint(state ? .turtoise : .primary)
+				}
 			}
 		case .share(let action):
 			Button(action: action) {

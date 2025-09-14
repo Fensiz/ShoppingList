@@ -17,7 +17,7 @@ struct MenuToolbar: ToolbarContent {
 	var body: some ToolbarContent {
 		ToolbarItem(placement: .navigationBarTrailing) {
 			Menu {
-				ForEach(Array(actions.enumerated()), id: \.offset) { _, action in
+				ForEach(Array(actions), id: \.self) { action in
 					action.button
 				}
 			} label: {

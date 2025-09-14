@@ -6,46 +6,64 @@
 //
 
 import SwiftUI
+import Combine
 
 struct AppTextField: View {
 	enum AppTextFieldState {
 		case normal
 		case error(String)
+
 		var isError: Bool {
-			if case .error = self {
-				return true
-			}
-			return false
+			if case .error = self { true } else { false }
 		}
 	}
 
+	@FocusState var isFocused: Bool
 	@Binding var text: String
 	let state: AppTextFieldState
+	let numbersOnly: Bool
+	let placeholder: String?
 
-	init(text: Binding<String>, state: AppTextFieldState = .normal) {
+	init(
+		text: Binding<String>,
+		state: AppTextFieldState = .normal,
+		numbersOnly: Bool = false,
+		placeholder: String? = nil
+	) {
 		self._text = text
 		self.state = state
+		self.numbersOnly = numbersOnly
+		self.placeholder = placeholder
 	}
 
 	var body: some View {
 		VStack(spacing: 4) {
 			HStack {
-				PlaceholderTextField(
-					text: $text,
-					placeholder: "Введите название списка",
-					placeholderColor: .greyHint
+				TextField(
+					placeholder ?? "",
+					text: $text
 				)
+				.keyboardType(numbersOnly ? .numberPad : .default)
 				.font(.appBody)
 				.foregroundStyle(.appText)
-				if !text.isEmpty {
-					Button {
-						text = ""
-					} label: {
+				.focused($isFocused)
+				.onReceive(Just(text)) { newValue in
+					guard self.numbersOnly else { return }
+					let filtered = newValue.filter { "0123456789".contains($0) }
+					if filtered != newValue {
+						self.text = filtered
+					}
+				}
+
+				if !text.isEmpty && isFocused {
+					Button { text = "" } label: {
 						Image(.circleCross)
 							.foregroundColor(.greyHint)
 					}
+					.transition(.opacity.combined(with: .scale))
 				}
 			}
+			.animation(.default, value: isFocused)
 			.padding(.horizontal, 16)
 			.frame(height: 54)
 			.background(.elementBackground)
@@ -54,6 +72,7 @@ struct AppTextField: View {
 				RoundedRectangle(cornerRadius: 12)
 					.stroke(state.isError ? .appSystemRed : .clear, lineWidth: 0.5)
 			)
+
 			if case let .error(errorMessage) = state {
 				Text(errorMessage)
 					.foregroundColor(.appSystemRed)
@@ -65,22 +84,6 @@ struct AppTextField: View {
 	}
 }
 
-private struct PlaceholderTextField: View {
-	@Binding var text: String
-	let placeholder: String
-	let placeholderColor: Color
-
-	var body: some View {
-		ZStack(alignment: .leading) {
-			if text.isEmpty {
-				Text(placeholder)
-					.foregroundColor(placeholderColor)
-			}
-			TextField("", text: $text)
-		}
-	}
-}
-
 private struct PreviewWrapper: View {
 	@State var text = ""
 	var body: some View {
@@ -88,11 +91,13 @@ private struct PreviewWrapper: View {
 			Color.screenBackground.ignoresSafeArea()
 			VStack {
 				AppTextField(text: .constant("123"), state: .normal)
-				AppTextField(text: $text, state: text == "123" ? .error("Ошибка") : .normal)
+				AppTextField(text: $text, state: text == "123" ? .error("Ошибка") : .normal, placeholder: "Placeholder")
+				AppTextField(text: $text, state: text == "123" ? .error("Ошибка") : .normal, numbersOnly: true, placeholder: "Placeholder")
 			}
 		}
 	}
 }
+
 #Preview {
 	PreviewWrapper()
 }
