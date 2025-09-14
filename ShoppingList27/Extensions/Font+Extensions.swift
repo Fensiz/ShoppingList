@@ -37,6 +37,7 @@ extension Font {
 
 	static let appHeadline: Font = .rubik(.medium, size: 17)
 	static let appBody: Font = .rubik(.regular, size: 17)
+	static let appSemibold: Font = .rubik(.semibold, size: 17)
 	static let largeTitleRegular: Font = .rubik(.regular, size: .largeTitle)
 	static let largeTitleSemibold: Font = .rubik(.semibold, size: .largeTitle)
 	static let title1Regular: Font = .rubik(.regular, size: .title1)
