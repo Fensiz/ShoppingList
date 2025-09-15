@@ -10,7 +10,6 @@ import Foundation
 
 @Model
 final class ProductItemModel {
-	@Attribute(.unique)
 	var name: String
 	@Relationship(deleteRule: .nullify, inverse: \ListItemModel.products)
 	var list: ListItemModel?
