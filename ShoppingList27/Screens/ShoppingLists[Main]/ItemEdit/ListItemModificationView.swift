@@ -19,23 +19,27 @@ struct ListItemModificationView: View {
 	var body: some View {
 		ZStack {
 			Color.screenBackground.ignoresSafeArea()
-			VStack(spacing: 24) {
-				VStack(spacing: 4) {
-					AppTextField(
-						text: $viewModel.listName,
-						state: viewModel.isItemNameUnique ? .normal
-						: .error("Это название уже используется, пожалуйста, измените его."),
-						placeholder: "Введите название списка"
-					)
+			VStack {
+				ScrollView {
+					VStack(spacing: 24) {
+						VStack(spacing: 4) {
+							AppTextField(
+								text: $viewModel.listName,
+								state: viewModel.isItemNameUnique ? .normal
+								: .error("Это название уже используется, пожалуйста, измените его."),
+								placeholder: "Введите название списка"
+							)
+						}
+						AppColorPicker(
+							selectedColor: $viewModel.selectedColor,
+							title: viewModel.isNewItem ? "Выберите цвет" : "Цвет"
+						)
+						LogoGridPicker(
+							selectedLogo: $viewModel.selectedLogo,
+							selectedColor: viewModel.selectedColor
+						)
+					}
 				}
-				AppColorPicker(
-					selectedColor: $viewModel.selectedColor,
-					title: viewModel.isNewItem ? "Выберите цвет" : "Цвет"
-				)
-				LogoGridPicker(
-					selectedLogo: $viewModel.selectedLogo,
-					selectedColor: viewModel.selectedColor
-				)
 				Spacer()
 				AppButton(title: viewModel.isNewItem ? "Создать" : "Сохранить") {
 					viewModel.save()
@@ -44,6 +48,7 @@ struct ListItemModificationView: View {
 				.disabled(viewModel.isSaveDisabled)
 			}
 			.padding(Constants.padding)
+			.ignoresSafeArea(.keyboard)
 		}
 		.navigationBarTitleDisplayMode(.inline)
 		.navigationBarBackButtonHidden(true)

@@ -25,7 +25,7 @@ final class ProductItemModel {
 
 	init(
 		name: String,
-		list: ListItemModel,
+		list: ListItemModel?,
 		count: Int,
 		unit: Unit
 	) {
@@ -34,5 +34,38 @@ final class ProductItemModel {
 		self.count = count
 		self.unitRaw = unit.rawValue
 //		createdAt = .now
+	}
+}
+
+extension ProductItemModel: Codable {
+	enum CodingKeys: String, CodingKey {
+		case name
+		case isBought
+		case count
+		case unitRaw
+	}
+
+	convenience init(from decoder: Decoder) throws {
+		let container = try decoder.container(keyedBy: CodingKeys.self)
+		let name = try container.decode(String.self, forKey: .name)
+		let isBought = try container.decode(Bool.self, forKey: .isBought)
+		let count = try container.decode(Int.self, forKey: .count)
+		let unitRaw = try container.decode(String.self, forKey: .unitRaw)
+
+		self.init(
+			name: name,
+			list: nil,
+			count: count,
+			unit: Unit(rawValue: unitRaw) ?? .piece
+		)
+		self.isBought = isBought
+	}
+
+	func encode(to encoder: Encoder) throws {
+		var container = encoder.container(keyedBy: CodingKeys.self)
+		try container.encode(name, forKey: .name)
+		try container.encode(isBought, forKey: .isBought)
+		try container.encode(count, forKey: .count)
+		try container.encode(unitRaw, forKey: .unitRaw)
 	}
 }

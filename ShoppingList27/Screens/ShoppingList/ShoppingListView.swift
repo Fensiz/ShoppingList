@@ -53,7 +53,7 @@ struct ShoppingListView: View {
 			TitleToolbar(title: viewModel.list.name)
 			MenuToolbar {
 				MenuElement.sortByName(viewModel.toggleSortState, viewModel.sortState)
-				MenuElement.share({})
+				MenuElement.share(viewModel.share)
 				MenuElement.uncheckAll(viewModel.uncheckAll)
 				MenuElement.deleteBought(viewModel.showDeletionAlertForAllBoughtDeletion)
 			}

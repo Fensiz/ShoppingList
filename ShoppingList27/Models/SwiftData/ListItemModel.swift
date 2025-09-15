@@ -47,3 +47,36 @@ final class ListItemModel {
 //		created = .now
 	}
 }
+
+extension ListItemModel: Codable {
+	enum CodingKeys: String, CodingKey {
+		case name
+		case products
+		case logoImageName
+		case logoColorHex
+	}
+
+	convenience init(from decoder: Decoder) throws {
+		let container = try decoder.container(keyedBy: CodingKeys.self)
+
+		let name = try container.decode(String.self, forKey: .name)
+		let logoImageName = try container.decode(String.self, forKey: .logoImageName)
+		let logoColorHex = try container.decode(String.self, forKey: .logoColorHex)
+		let products = try container.decode([ProductItemModel].self, forKey: .products)
+
+		self.init(
+			logo: ItemLogo(imageName: logoImageName, colorHex: logoColorHex),
+			name: name,
+			products: products
+		)
+	}
+
+	func encode(to encoder: Encoder) throws {
+		var container = encoder.container(keyedBy: CodingKeys.self)
+
+		try container.encode(name, forKey: .name)
+		try container.encode(products, forKey: .products)
+		try container.encode(logoImageName, forKey: .logoImageName)
+		try container.encode(logoColorHex, forKey: .logoColorHex)
+	}
+}

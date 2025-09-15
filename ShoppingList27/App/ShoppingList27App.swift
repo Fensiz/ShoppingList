@@ -98,6 +98,22 @@ struct ShoppingList27App: App {
 				appTheme == .system ? nil :
 					appTheme == .light ? .light : .dark
 			)
+			.onOpenURL { url in
+				if url.pathExtension == "shoppinglist" {
+					importShoppingList(from: url)
+				}
+			}
+		}
+	}
+
+	private func importShoppingList(from url: URL) {
+		do {
+			let data = try Data(contentsOf: url)
+			let decoded = try JSONDecoder().decode(ListItemModel.self, from: data)
+			// добавить список в базу
+			print("Импортирован список: \(decoded.name)")
+		} catch {
+			print("Ошибка импорта: \(error)")
 		}
 	}
 }

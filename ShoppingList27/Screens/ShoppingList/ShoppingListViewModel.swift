@@ -156,4 +156,30 @@ import SwiftUI
 	func fetchOptions(for list: ListItemModel, startingWith prefix: String) -> [String] {
 		dataSource.fetchOptions(for: list, startingWith: prefix)
 	}
+
+	func share() {
+		do {
+			// Кодируем список в JSON
+			let encoder = JSONEncoder()
+			encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+			let data = try encoder.encode(list)
+
+			// Создаём временный файл с расширением .shoppinglist
+			let tempURL = FileManager.default.temporaryDirectory
+				.appendingPathComponent("\(list.name).shoppinglist")
+
+			try data.write(to: tempURL)
+
+			// Открываем системное меню Share
+			let activityVC = UIActivityViewController(activityItems: [tempURL], applicationActivities: nil)
+
+			// Для iPad нужно указать anchor
+			if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+			   let rootVC = scene.windows.first?.rootViewController {
+				rootVC.present(activityVC, animated: true)
+			}
+		} catch {
+			print("⚠️ Ошибка при подготовке к шарингу: \(error)")
+		}
+	}
 }

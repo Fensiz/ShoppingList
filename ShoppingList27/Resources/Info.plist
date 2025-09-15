@@ -11,5 +11,22 @@
 		<string>Rubik-Regular.ttf</string>
 		<string>Rubik-SemiBold.ttf</string>
 	</array>
+	<key>UTTypeIdentifier</key>
+	<string>com.yourapp.shoppinglist</string>
+	<key>UTTypeDescription</key>
+	<string>Shopping List File</string>
+	<key>UTTypeConformsTo</key>
+	<array>
+		<string>public.json</string>
+	</array>
+	<key>UTTypeTagSpecification</key>
+	<dict>
+		<key>public.filename-extension</key>
+		<array>
+			<string>shoppinglist</string>
+		</array>
+		<key>public.mime-type</key>
+		<string>application/json</string>
+	</dict>
 </dict>
 </plist>
