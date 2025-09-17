@@ -5,7 +5,7 @@
 //  Created by Симонов Иван Дмитриевич on 05.09.2025.
 //
 
-import SwiftUICore
+import SwiftUI
 
 extension Binding where Value == Bool {
 	var not: Binding<Bool> {

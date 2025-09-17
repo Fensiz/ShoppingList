@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
+	<key>UIDesignRequiresCompatibility</key>
+	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>Launch Screen</string>
 	<key>UIAppFonts</key>
@@ -11,22 +15,42 @@
 		<string>Rubik-Regular.ttf</string>
 		<string>Rubik-SemiBold.ttf</string>
 	</array>
-	<key>UTTypeIdentifier</key>
-	<string>com.yourapp.shoppinglist</string>
-	<key>UTTypeDescription</key>
-	<string>Shopping List File</string>
-	<key>UTTypeConformsTo</key>
+	<key>UTExportedTypeDeclarations</key>
 	<array>
-		<string>public.json</string>
+		<dict>
+			<key>UTTypeIdentifier</key>
+			<string>ru.fensiz.shoppinglist</string>
+			<key>UTTypeDescription</key>
+			<string>Shopping List File</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.json</string>
+			</array>
+			<key>UTTypeTagSpecification</key>
+			<dict>
+				<key>public.filename-extension</key>
+				<array>
+					<string>shoppinglist</string>
+				</array>
+				<key>public.mime-type</key>
+				<string>application/json</string>
+			</dict>
+		</dict>
 	</array>
-	<key>UTTypeTagSpecification</key>
-	<dict>
-		<key>public.filename-extension</key>
-		<array>
-			<string>shoppinglist</string>
-		</array>
-		<key>public.mime-type</key>
-		<string>application/json</string>
-	</dict>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Shopping List File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSHandlerRank</key>
+			<string>Owner</string>
+			<key>LSItemContentTypes</key>
+			<array>
+				<string>ru.fensiz.shoppinglist</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

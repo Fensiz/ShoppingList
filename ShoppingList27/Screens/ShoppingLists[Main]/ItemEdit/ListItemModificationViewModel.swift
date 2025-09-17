@@ -8,15 +8,25 @@
 import SwiftUI
 
 @Observable final class ListItemModificationViewModel {
-	enum Mode {
-		case add
-		case edit
+	enum Mode: Equatable {
+		case add(onSave: ((ListItemModel) -> Void)?)
+		case edit(onSave: (() -> Void)?)
+
+		static func == (lhs: Mode, rhs: Mode) -> Bool {
+			switch (lhs, rhs) {
+			case (.add, .add):
+				return true
+			case (.edit, .edit):
+				return true
+			default:
+				return false
+			}
+		}
 	}
 	let originalItem: ListItemModel?
 	var listName: String = ""
 	var selectedColor: Color?
 	var selectedLogo: String?
-	let onSave: ((ListItemModel) -> Void)?
 	let checkExistance: ((String) -> Bool)
 	let mode: Mode
 
@@ -25,9 +35,10 @@ import SwiftUI
 	}
 
 	var isItemNameUnique: Bool {
-		if let originalItem, mode == .edit {
-			listName == originalItem.name || !checkExistance(listName)
-		} else {
+		switch (originalItem, mode) {
+		case (let item?, .edit):
+			listName == item.name || !checkExistance(listName)
+		default:
 			!checkExistance(listName)
 		}
 	}
@@ -41,8 +52,7 @@ import SwiftUI
 
 	init(
 		listItem: ListItemModel? = nil,
-		mode: Mode = .add,
-		onSave: ((ListItemModel) -> Void)? = nil,
+		mode: Mode,
 		checkExistance: @escaping ((String) -> Bool) = { _ in false }
 	) {
 		self.originalItem = listItem
@@ -51,25 +61,26 @@ import SwiftUI
 			self.selectedColor = listItem.logo.color
 			self.selectedLogo = listItem.logo.imageName
 		}
-		self.onSave = onSave
 		self.checkExistance = checkExistance
 		self.mode = mode
 	}
 
 	func save() {
 		guard let selectedLogo, let selectedColor else { return }
-		let item = ListItemModel(
-			logo: .init(imageName: selectedLogo, color: selectedColor),
-			name: listName,
-			products: []
-		)
-
-//		(
-//			logo: .init(imageName: selectedLogo, color: selectedColor),
-//			name: listName,
-//			count: 0,
-//			total: 0
-//		)
-		onSave?(item)
+		switch (originalItem, mode) {
+		case (let item?, .edit(let onSave)):
+			item.logo = .init(imageName: selectedLogo, color: selectedColor)
+			item.name = listName
+			onSave?()
+		case (_, .add(let onSave)):
+			let item = ListItemModel(
+				logo: .init(imageName: selectedLogo, color: selectedColor),
+				name: listName,
+				products: []
+			)
+			onSave?(item)
+		default:
+			print("Unknown state")
+		}
 	}
 }

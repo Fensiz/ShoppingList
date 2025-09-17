@@ -56,17 +56,19 @@ import SwiftUI
 		updateList()
 	}
 
+	func updateItem() {
+		dataSource.applyChanges()
+	}
+
 	private func removeItem(_ item: ListItemModel) {
 		dataSource.delete(item)
 		updateList()
 	}
 
-	private func updateList() {
+	func updateList() {
 		list = dataSource.fetchListItems(sortedByName: sortState)
 	}
 }
-
-
 
 struct ShareSheet: UIViewControllerRepresentable {
 	let items: [Any]

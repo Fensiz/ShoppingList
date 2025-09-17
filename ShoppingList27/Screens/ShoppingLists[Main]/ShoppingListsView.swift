@@ -34,7 +34,7 @@ struct ShoppingListsView: View {
 							AppSwipeAction.edit {
 								coordinator.openShoppingListEditScreen(
 									with: item,
-									action: viewModel.addNewItem,
+									action: viewModel.updateItem,
 									checkExistance: viewModel.isItemExist
 								)
 							}
@@ -80,6 +80,11 @@ struct ShoppingListsView: View {
 			}
 		} message: {
 			Text("Вы действительно хотите удалить список?")
+		}
+		.onAppear {
+			coordinator.onMainScreenAppear = { [weak viewModel] in
+				viewModel?.updateList()
+			}
 		}
 	}
 

@@ -11,6 +11,8 @@ import Combine
 @Observable final class AppCoordinator {
 	static let key = "didFinishOnboarding24"
 
+	var onMainScreenAppear: (() -> Void)?
+
 	var isOnboardingShowing: Bool
 
 	var navigationPath: [Screen] = []
@@ -22,7 +24,7 @@ import Combine
 		)
 		case shoppingListEdit(
 			item: ListItemModel,
-			action: (ListItemModel) -> Void,
+			action: () -> Void,
 			checkExistance: (String) -> Bool
 		)
 		case shoppingListCopy(
@@ -43,7 +45,7 @@ import Combine
 			checkExistance: (String) -> Bool
 		)
 
-		static func ==(lhs: Screen, rhs: Screen) -> Bool {
+		static func == (lhs: Screen, rhs: Screen) -> Bool {
 			switch (lhs, rhs) {
 			case (.shoppingListCreation, .shoppingListCreation):
 				return true
@@ -89,10 +91,6 @@ import Combine
 		_ = navigationPath.popLast()
 	}
 
-	func start() {
-
-	}
-
 	func finishOnboarding() {
 		isOnboardingShowing = false
 		UserDefaults.standard.setValue(true, forKey: AppCoordinator.key)
@@ -100,6 +98,7 @@ import Combine
 
 	func openShoppingListsScreen() {
 		navigationPath.removeAll()
+		onMainScreenAppear?()
 	}
 
 	func openProductCreationScreen(
@@ -128,7 +127,7 @@ import Combine
 
 	func openShoppingListEditScreen(
 		with item: ListItemModel,
-		action: @escaping (ListItemModel) -> Void,
+		action: @escaping () -> Void,
 		checkExistance: @escaping (String) -> Bool
 	) {
 		navigationPath.append(

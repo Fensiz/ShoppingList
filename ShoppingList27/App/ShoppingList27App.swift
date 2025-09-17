@@ -63,13 +63,24 @@ struct ShoppingList27App: App {
 							let viewModel = ShoppingListViewModel(list: item, dataSource: dataSource)
 							ShoppingListView(viewModel: viewModel)
 						case .shoppingListEdit(let item, let action, let checkExistance):
-							let viewModel = ListItemModificationViewModel(listItem: item, mode: .edit, onSave: action, checkExistance: checkExistance)
+							let viewModel = ListItemModificationViewModel(
+								listItem: item,
+								mode: .edit(onSave: action),
+								checkExistance: checkExistance
+							)
 							ListItemModificationView(viewModel: viewModel)
 						case let .shoppingListCopy(item, action, checkExistance):
-							let viewModel = ListItemModificationViewModel(listItem: item, onSave: action, checkExistance: checkExistance)
+							let viewModel = ListItemModificationViewModel(
+								listItem: item,
+								mode: .add(onSave: action),
+								checkExistance: checkExistance
+							)
 							ListItemModificationView(viewModel: viewModel)
-						case .shoppingListCreation(let action, let checkExistance):
-							let viewModel = ListItemModificationViewModel(onSave: action, checkExistance: checkExistance)
+						case let .shoppingListCreation(action, checkExistance):
+							let viewModel = ListItemModificationViewModel(
+								mode: .add(onSave: action),
+								checkExistance: checkExistance
+							)
 							ListItemModificationView(viewModel: viewModel)
 						case let .productCreation(list, action, checkExistance):
 							let viewModel = ProductEditViewModel(
@@ -78,7 +89,6 @@ struct ShoppingList27App: App {
 								cancelAction: coordinator.goBack,
 								isExistCheckAction: checkExistance
 							)
-
 							ProductEditView(viewModel: viewModel)
 						case .productEdit:
 							EmptyView()
@@ -110,7 +120,11 @@ struct ShoppingList27App: App {
 		do {
 			let data = try Data(contentsOf: url)
 			let decoded = try JSONDecoder().decode(ListItemModel.self, from: data)
-			// добавить список в базу
+
+			let dataSource = ListItemDataSource(context: sharedModelContainer.mainContext)
+			try dataSource.safeInsert(decoded)
+			coordinator.openShoppingListsScreen()
+
 			print("Импортирован список: \(decoded.name)")
 		} catch {
 			print("Ошибка импорта: \(error)")

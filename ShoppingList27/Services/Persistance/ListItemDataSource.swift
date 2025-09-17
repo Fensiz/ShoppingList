@@ -6,10 +6,12 @@
 //
 
 import SwiftData
+import SwiftUI
 
 @MainActor protocol ListItemDataSourceProtocol {
 	func insert(_ entity: ListItemModel)
 	func delete(_ entity: ListItemModel)
+	func applyChanges()
 	func fetchListItems(sortedByName: Bool) -> [ListItemModel]
 }
 
@@ -27,6 +29,19 @@ extension ListItemDataSource {
 	func insert(_ entity: ListItemModel) {
 		self.context?.insert(entity)
 		try? self.context?.save()
+	}
+
+	func applyChanges() {
+		try? self.context?.save()
+	}
+
+	func safeInsert(_ entity: ListItemModel) throws {
+		guard !isItemExist(entity) else {
+			throw NSError(domain: "ListItemDataSource",
+						  code: 1,
+						  userInfo: [NSLocalizedDescriptionKey: "Список с таким именем уже существует"])
+		}
+		insert(entity)
 	}
 
 	func delete(_ entity: ListItemModel) {
@@ -49,5 +64,13 @@ extension ListItemDataSource {
 
 		let items = try? context?.fetch(descriptor)
 		return items ?? []
+	}
+
+	private func isItemExist(_ entity: ListItemModel) -> Bool {
+		let fetchDescriptor = FetchDescriptor<ListItemModel>(
+			predicate: #Predicate { $0.name == entity.name }
+		)
+
+		return (try? context?.fetch(fetchDescriptor))?.isEmpty == false
 	}
 }

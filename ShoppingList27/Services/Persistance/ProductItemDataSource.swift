@@ -43,7 +43,7 @@ import SwiftData
 			let descriptor = FetchDescriptor<ProductItemModel>(
 				predicate: #Predicate<ProductItemModel> { $0.list?.name == name },
 				sortBy: sortedByName ? [.init(\.name, order: .forward)]
-				: []//[.init(\.createdAt, order: .forward)]
+				: []// [.init(\.createdAt, order: .forward)]
 			)
 			return try context.fetch(descriptor)
 		} catch {

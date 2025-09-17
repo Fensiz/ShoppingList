@@ -69,6 +69,7 @@ extension ListItemModel: Codable {
 			name: name,
 			products: products
 		)
+		self.products.forEach { $0.list = self }
 	}
 
 	func encode(to encoder: Encoder) throws {

@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-
-
 struct ProductEditView: View {
 	@State var viewModel: ProductEditViewModel
 	@FocusState var isNameFocused: Bool

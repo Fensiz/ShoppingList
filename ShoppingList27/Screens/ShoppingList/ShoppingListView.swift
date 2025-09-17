@@ -88,11 +88,11 @@ struct ShoppingListView: View {
 		VStack(spacing: 0) {
 			Spacer()
 			VStack(spacing: 28) {
-				Image(.emptyListPlaceholder)
+				Image(.emptyListItemPlaceholder)
 				VStack(spacing: 4) {
 					Text("Давайте спланируем покупки!")
 						.font(.title3Semibold)
-					Text("Создайте свой первый список")
+					Text("Начните добавлять товары")
 						.font(.appBody)
 				}
 				.foregroundStyle(.appText)

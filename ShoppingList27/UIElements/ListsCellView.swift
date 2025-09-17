@@ -56,7 +56,7 @@ struct ListsCellView: View {
 	}
 }
 
-//#Preview {
+// #Preview {
 //	List {
 //		ListsCellView(item: .mock2)
 //		ListsCellView(item: .mock2)
@@ -65,4 +65,4 @@ struct ListsCellView: View {
 //	.listStyle(.insetGrouped)
 //	.scrollContentBackground(.hidden)
 //	.background(Color.screenBackground)
-//}
+// }

@@ -6,6 +6,10 @@
 //
 
 final class MockListItemDataSource: ListItemDataSourceProtocol {
+	func applyChanges() {
+		
+	}
+	
 	func fetchListItems(sortedByName: Bool) -> [ListItemModel] {
 		items
 	}
