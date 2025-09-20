@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-@Observable final class ProductEditViewModel {
+@MainActor @Observable final class ProductEditViewModel {
 	enum Mode {
 		case add
 		case edit
@@ -46,7 +46,7 @@ import SwiftUI
 	private let saveAction: ((ProductItemModel) -> Void)?
 	private let cancelAction: (() -> Void)?
 	private let isExistCheckAction: ((String) -> Bool)?
-	private let fetchAction: ((ListItemModel, String) -> [String])?
+	private let fetchAction: ((ListItemModel, String) async -> [String])?
 
 	init(
 		item: ProductItemModel? = nil,
@@ -54,7 +54,7 @@ import SwiftUI
 		saveAction: ((ProductItemModel) -> Void)? = nil,
 		cancelAction: (() -> Void)? = nil,
 		isExistCheckAction: ((String) -> Bool)? = nil,
-		fetchAction: ((ListItemModel, String) -> [String])? = nil
+		fetchAction: ((ListItemModel, String) async -> [String])? = nil
 	) {
 		originalItem = item
 		if let item {
@@ -107,8 +107,11 @@ import SwiftUI
 
 	private func fetchOptions() {
 		guard isInTextField else { return }
+		let list = self.list
 		if !name.isEmpty {
-			options = fetchAction?(list, name) ?? []
+			Task {
+				options = await fetchAction?(list, name) ?? []
+			}
 			if !options.isEmpty {
 				isOptionsShown = true
 			}

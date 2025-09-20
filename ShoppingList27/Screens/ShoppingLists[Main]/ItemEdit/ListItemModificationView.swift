@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct ListItemModificationView: View {
-	@Environment(\.presentationMode) private var presentationMode
 	@Environment(AppCoordinator.self) var coordinator
 	@State var viewModel: ListItemModificationViewModel
 

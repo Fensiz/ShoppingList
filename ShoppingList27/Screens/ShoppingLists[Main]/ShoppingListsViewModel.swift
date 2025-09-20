@@ -66,7 +66,9 @@ import SwiftUI
 	}
 
 	func updateList() {
-		list = dataSource.fetchListItems(sortedByName: sortState)
+		Task {
+			list = dataSource.fetchListItems(sortedByName: sortState)
+		}
 	}
 }
 
