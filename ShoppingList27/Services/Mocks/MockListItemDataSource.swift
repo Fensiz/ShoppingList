@@ -6,6 +6,10 @@
 //
 
 final class MockListItemDataSource: ListItemDataSourceProtocol {
+	func safeInsert(_ entity: ListItemModel) throws {
+		
+	}
+	
 	func applyChanges() {
 		
 	}

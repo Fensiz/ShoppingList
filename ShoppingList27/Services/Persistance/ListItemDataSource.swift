@@ -13,6 +13,7 @@ import SwiftUI
 	func delete(_ entity: ListItemModel)
 	func applyChanges()
 	func fetchListItems(sortedByName: Bool) -> [ListItemModel]
+	func safeInsert(_ entity: ListItemModel) throws
 }
 
 @MainActor final class ListItemDataSource: ListItemDataSourceProtocol {

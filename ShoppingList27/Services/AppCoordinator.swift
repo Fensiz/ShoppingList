@@ -8,15 +8,33 @@
 import SwiftUI
 import Combine
 
-@Observable final class AppCoordinator {
-	static let key = "didFinishOnboarding24"
+protocol AppCoordinatorProtocol: AnyObject {
+	func goBack()
+	func finishOnboarding()
+	func openShoppingListsScreen()
+	func openProductCreationScreen(
+		list: ListItemModel,
+		action: @escaping (ProductItemModel) -> Void,
+		checkExistance: @escaping (String) -> Bool
+	)
+	func openShoppingListScreen(with item: ListItemModel)
+	func openShoppingListCreationScreen(
+		action: @escaping (ListItemModel) -> Void,
+		checkExistance: @escaping (String) -> Bool
+	)
+	func openShoppingListEditScreen(
+		with item: ListItemModel,
+		action: @escaping () -> Void,
+		checkExistance: @escaping (String) -> Bool
+	)
+	func openShoppingListCopyScreen(
+		with item: ListItemModel,
+		action: @escaping (ListItemModel) -> Void,
+		checkExistance: @escaping (String) -> Bool
+	)
+}
 
-	var onMainScreenAppear: (() -> Void)?
-
-	var isOnboardingShowing: Bool
-
-	var navigationPath: [Screen] = []
-
+@Observable final class AppCoordinator: AppCoordinatorProtocol {
 	enum Screen: Hashable {
 		case shoppingListCreation(
 			action: (ListItemModel) -> Void,
@@ -44,19 +62,22 @@ import Combine
 			action: (ProductItemModel) -> Void,
 			checkExistance: (String) -> Bool
 		)
+		case shoppingLists(themeProvider: any AppThemeProvider)
 
 		static func == (lhs: Screen, rhs: Screen) -> Bool {
 			switch (lhs, rhs) {
 			case (.shoppingListCreation, .shoppingListCreation):
-				return true
+				true
 			case let (.shoppingListEdit(item1, _, _), .shoppingListEdit(item2, _, _)):
-				return item1 == item2
+				item1 == item2
 			case let (.shoppingListCopy(item1, _, _), .shoppingListCopy(item2, _, _)):
-				return item1 == item2
+				item1 == item2
 			case let (.shoppingList(item1), .shoppingList(item2)):
-				return item1 == item2
+				item1 == item2
+			case (.shoppingLists, .shoppingLists):
+				true
 			default:
-				return false
+				false
 			}
 		}
 
@@ -78,10 +99,17 @@ import Combine
 			case let .productEdit(item, _, _):
 				hasher.combine(5)
 				hasher.combine(item)
-
+			case .shoppingLists:
+				hasher.combine(6)
 			}
 		}
 	}
+
+	static let key = "didFinishOnboarding24"
+	var onMainScreenAppear: (() -> Void)?
+	var isOnboardingShowing: Bool
+	var navigationPath: [Screen] = []
+	var rootScreen: Screen!
 
 	init() {
 		isOnboardingShowing = !UserDefaults.standard.bool(forKey: AppCoordinator.key)

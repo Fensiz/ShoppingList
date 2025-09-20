@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ShoppingListsView: View {
-	@Environment(AppCoordinator.self) var coordinator: AppCoordinator
+	@Environment(AppCoordinator.self) private var coordinator: AppCoordinator
 	@State var viewModel: ShoppingListsViewModel
 	@Binding var appTheme: AppTheme
 
