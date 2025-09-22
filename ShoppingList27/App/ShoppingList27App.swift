@@ -31,17 +31,21 @@ struct ShoppingList27App: App {
 
 	var body: some Scene {
 		WindowGroup {
-			let coordinator = AppCoordinator()
-			let screenFactory = ScreenFactory(
-				sharedModelContainer: sharedModelContainer,
-				coordinator: coordinator
-			)
-			let viewModel = RootViewModel(
-				dataSource: ListItemDataSource(
-					context: sharedModelContainer.mainContext
-				),
-				coordinator: coordinator
-			)
+			let (coordinator, screenFactory, viewModel) = {
+				let coordinator = AppCoordinator()
+				let screenFactory = ScreenFactory(
+					sharedModelContainer: sharedModelContainer,
+					coordinator: coordinator
+				)
+				let viewModel = RootViewModel(
+					dataSource: ListItemDataSource(
+						context: sharedModelContainer.mainContext
+					),
+					coordinator: coordinator
+				)
+				coordinator.rootScreen = .shoppingLists(themeProvider: viewModel)
+				return (coordinator, screenFactory, viewModel)
+			}()
 			RootView(
 				coordinator: coordinator,
 				factory: screenFactory,
