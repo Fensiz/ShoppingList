@@ -45,7 +45,7 @@ extension ProductItemModel: Codable {
 		case unitRaw
 	}
 
-	convenience init(from decoder: Decoder) throws {
+	convenience init(from decoder: any Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
 		let name = try container.decode(String.self, forKey: .name)
 		let isBought = try container.decode(Bool.self, forKey: .isBought)
@@ -61,7 +61,7 @@ extension ProductItemModel: Codable {
 		self.isBought = isBought
 	}
 
-	func encode(to encoder: Encoder) throws {
+	func encode(to encoder: any Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeys.self)
 		try container.encode(name, forKey: .name)
 		try container.encode(isBought, forKey: .isBought)

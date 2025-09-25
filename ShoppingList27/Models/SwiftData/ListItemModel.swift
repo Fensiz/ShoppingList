@@ -56,7 +56,7 @@ extension ListItemModel: Codable {
 		case logoColorHex
 	}
 
-	convenience init(from decoder: Decoder) throws {
+	convenience init(from decoder: any Decoder) throws {
 		let container = try decoder.container(keyedBy: CodingKeys.self)
 
 		let name = try container.decode(String.self, forKey: .name)
@@ -72,7 +72,7 @@ extension ListItemModel: Codable {
 		self.products.forEach { $0.list = self }
 	}
 
-	func encode(to encoder: Encoder) throws {
+	func encode(to encoder: any Encoder) throws {
 		var container = encoder.container(keyedBy: CodingKeys.self)
 
 		try container.encode(name, forKey: .name)

@@ -20,7 +20,6 @@ struct RootView: View {
 		self.coordinator = coordinator
 		self.viewModel = viewModel
 		self.factory = factory
-		self.coordinator.rootScreen = .shoppingLists(themeProvider: viewModel)
 	}
 
 	var body: some View {

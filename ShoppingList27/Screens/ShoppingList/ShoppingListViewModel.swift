@@ -78,7 +78,9 @@ import SwiftUI
 	}
 
 	private func updateList() {
-		products = dataSource.fetchProducts(for: list, sortedByName: sortState)
+		Task {
+			products = dataSource.fetchProducts(for: list, sortedByName: sortState)
+		}
 	}
 
 	func hideAlert() {
@@ -153,7 +155,7 @@ import SwiftUI
 		updateList()
 	}
 
-	func fetchOptions(for list: ListItemModel, startingWith prefix: String) -> [String] {
+	func fetchOptions(for list: ListItemModel, startingWith prefix: String) async -> [String] {
 		dataSource.fetchOptions(for: list, startingWith: prefix)
 	}
 
