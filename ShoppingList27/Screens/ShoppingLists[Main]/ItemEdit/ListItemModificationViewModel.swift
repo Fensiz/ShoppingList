@@ -72,6 +72,16 @@ import SwiftUI
 			item.logo = .init(imageName: selectedLogo, color: selectedColor)
 			item.name = listName
 			onSave?()
+		case (let original?, .add(let onSave)):
+			let list = ListItemModel(
+				logo: .init(imageName: selectedLogo, color: selectedColor),
+				name: listName,
+				products: []
+			)
+			list.products = original.products.map { item in
+				ProductItemModel(name: item.name, list: list, count: item.count, unit: item.unit)
+			}
+			onSave?(list)
 		case (_, .add(let onSave)):
 			let item = ListItemModel(
 				logo: .init(imageName: selectedLogo, color: selectedColor),
